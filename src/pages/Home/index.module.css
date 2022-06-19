@@ -1,0 +1,20 @@
+.app{
+    border: 1px solid #000;
+    margin: 10px;
+    padding: 10px;
+}
+
+.red{
+   color: red;
+}
+
+:global(.list){
+    padding-top: 20px;
+}
+
+:global(.item){
+    padding: 5px;
+}
+:global(.remove){
+    margin-left: 10px;
+}
