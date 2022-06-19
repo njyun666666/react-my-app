@@ -3,12 +3,13 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 // import Home from "./pages/Home";
-import Counter from "./pages/Counter";
+// import Counter from "./pages/Counter";
+import SpeedConverter from "./pages/SpeedConverter";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Counter />
+    <SpeedConverter />
   </React.StrictMode>
 );
 
