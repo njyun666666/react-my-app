@@ -1,0 +1,7 @@
+.IconContainer {
+  flex-basis: 30%;
+}
+
+.IconContainer svg {
+  max-height: 110px;
+}

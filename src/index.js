@@ -4,13 +4,14 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 // import Home from "./pages/Home";
 // import Counter from "./pages/Counter";
-import SpeedConverter from "./pages/SpeedConverter";
+// import SpeedConverter from "./pages/SpeedConverter";
+import WeatherApp from "./pages/WeatherApp/WeatherApp";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <SpeedConverter />
-  </React.StrictMode>
+  <WeatherApp />
+  // <React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
