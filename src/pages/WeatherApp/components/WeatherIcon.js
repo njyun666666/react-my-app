@@ -15,7 +15,7 @@ import { ReactComponent as NightPartiallyClearWithRain } from "../../../images/n
 import { ReactComponent as NightSnowing } from "../../../images/night-snowing.svg";
 
 import style from "./WeatherIcon.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const weatherTypes = {
   isThunderstorm: [15, 16, 17, 18, 21, 22, 33, 34, 35, 36, 41],
@@ -51,27 +51,27 @@ const weatherIcons = {
 // 假設從 API 取得的天氣代碼是 1
 // const currentWeatherCode = 1;
 
+// 使用迴圈來找出該天氣代碼對應到的天氣型態
+const weatherCode2Type = (weatherCode) => {
+  const [weatherType] =
+    Object.entries(weatherTypes).find(([weatherType, weatherCodes]) => weatherCodes.includes(Number(weatherCode))) ||
+    [];
+
+  return weatherType;
+};
 // console.log(weatherCode2Type(currentWeatherCode)); // isClear
 
 const WeatherIcon = ({ currentWeatherCode, moment }) => {
   const [currentWeatherIcon, setCurrentWeatherIcon] = useState("isClear");
 
+  // 透過 useMemo 保存計算結果, currentWeatherCode的值沒變的話 就拿上次的結果
+  const theWeatherIcon = useMemo(() => weatherCode2Type(currentWeatherCode), [currentWeatherCode]);
+
   useEffect(() => {
     console.log("useEffect", currentWeatherCode, moment);
-    // 使用迴圈來找出該天氣代碼對應到的天氣型態
-    const weatherCode2Type = (weatherCode) => {
-      const [weatherType] =
-        Object.entries(weatherTypes).find(([weatherType, weatherCodes]) =>
-          weatherCodes.includes(Number(weatherCode))
-        ) || [];
 
-      return weatherType;
-    };
-
-    const currentWeatherIcon = weatherCode2Type(currentWeatherCode);
-
-    // STEP 3：透過 `setCurrentWeatherIcon` 修改組件內的資料狀態
-    setCurrentWeatherIcon(currentWeatherIcon);
+    // 透過 `setCurrentWeatherIcon` 修改組件內的資料狀態
+    setCurrentWeatherIcon(theWeatherIcon);
   }, [currentWeatherCode]);
 
   return <div className={style.IconContainer}>{weatherIcons[moment][currentWeatherIcon]}</div>;

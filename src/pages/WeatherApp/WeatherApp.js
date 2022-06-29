@@ -2,11 +2,35 @@ import style from "./WeatherApp.module.css";
 import { ReactComponent as AirFlowIcon } from "../../images/airFlow.svg";
 import { ReactComponent as RainIcon } from "../../images/rain.svg";
 import { ReactComponent as RefreshIcon } from "../../images/refresh.svg";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { OPENDATA_CWB_AUTHORIZATION } from "../../global/constants";
 import WeatherIcon from "./components/WeatherIcon";
+import sunriseAndSunsetData from "../../sunrise-sunset.json";
 
 const Authorization = OPENDATA_CWB_AUTHORIZATION;
+
+// STEP 1：定義 getMoment 方法
+const getMoment = (locationName) => {
+  const location = sunriseAndSunsetData.find((data) => data.locationName === locationName);
+
+  if (!location) return null;
+
+  const now = new Date();
+  const nowDate = Intl.DateTimeFormat("zh-TW", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(now)
+    .replace(/\//g, "-");
+
+  const locationDate = location.time && location.time.find((time) => time.dataTime === nowDate);
+  const sunriseTimestamp = new Date(`${locationDate.dataTime} ${locationDate.sunrise}`).getTime();
+  const sunsetTimestamp = new Date(`${locationDate.dataTime} ${locationDate.sunset}`).getTime();
+  const nowTimeStamp = now.getTime();
+
+  return sunriseTimestamp <= nowTimeStamp && nowTimeStamp <= sunsetTimestamp ? "day" : "night";
+};
 
 const fetchCurrentWeather = () => {
   return fetch(
@@ -91,6 +115,9 @@ const WeatherApp = () => {
     fetchData();
   }, [fetchData]);
 
+  // 透過 useMemo 避免每次都須重新計算取值，記得帶入 dependencies
+  const moment = useMemo(() => getMoment(weatherElement.locationName), [weatherElement.locationName]);
+
   return (
     <div className={style.container}>
       {console.log("render")}
@@ -103,7 +130,7 @@ const WeatherApp = () => {
           <div className={style.temperature}>
             {Math.round(weatherElement.temperature)} <div className={style.celsius}>°C</div>
           </div>
-          <WeatherIcon currentWeatherCode={weatherElement.weatherCode} moment="night" />
+          <WeatherIcon currentWeatherCode={weatherElement.weatherCode} moment={moment || "day"} />
         </div>
         <div className={style.airFlow}>
           <AirFlowIcon />
