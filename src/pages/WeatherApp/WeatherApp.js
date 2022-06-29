@@ -2,6 +2,7 @@ import style from "./WeatherApp.module.css";
 import { ReactComponent as AirFlowIcon } from "../../images/airFlow.svg";
 import { ReactComponent as RainIcon } from "../../images/rain.svg";
 import { ReactComponent as RefreshIcon } from "../../images/refresh.svg";
+import { ReactComponent as LoadingIcon } from "../../images/loading.svg";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { OPENDATA_CWB_AUTHORIZATION } from "../../global/constants";
 import WeatherIcon from "./components/WeatherIcon";
@@ -94,6 +95,7 @@ const WeatherApp = () => {
     weatherCode: 0,
     rainPossibility: 0,
     comfortability: "",
+    isLoading: true,
   });
 
   const fetchData = useCallback(() => {
@@ -104,8 +106,14 @@ const WeatherApp = () => {
       setWeatherElement({
         ...currentWeather,
         ...weatherForecast,
+        isLoading: false,
       });
     };
+
+    setWeatherElement((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }));
 
     fetchingData();
   }, []);
@@ -121,6 +129,7 @@ const WeatherApp = () => {
   return (
     <div className={style.container}>
       {console.log("render")}
+      {console.log("render, isLoading: ", weatherElement.isLoading)}
       <div className={style.weatherCard}>
         <div className={style.location}>{weatherElement.locationName}</div>
         <div className={style.description}>
@@ -141,7 +150,7 @@ const WeatherApp = () => {
           {Math.round(weatherElement.rainPossibility)}%
         </div>
         <div
-          className={style.redo}
+          className={style.refresh}
           onClick={() => {
             fetchData();
           }}
@@ -151,7 +160,7 @@ const WeatherApp = () => {
             hour: "numeric",
             minute: "numeric",
           }).format(new Date(weatherElement.observationTime))}{" "}
-          <RefreshIcon />
+          {weatherElement.isLoading ? <LoadingIcon className={style.loading} /> : <RefreshIcon />}
         </div>
       </div>
     </div>
