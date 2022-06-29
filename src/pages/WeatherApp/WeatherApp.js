@@ -98,6 +98,18 @@ const WeatherApp = () => {
     isLoading: true,
   });
 
+  const {
+    observationTime,
+    locationName,
+    temperature,
+    windSpeed,
+    description,
+    weatherCode,
+    rainPossibility,
+    comfortability,
+    isLoading,
+  } = weatherElement;
+
   const fetchData = useCallback(() => {
     const fetchingData = async () => {
       const [currentWeather, weatherForecast] = await Promise.all([fetchCurrentWeather(), fetchWeatherForecast()]);
@@ -124,30 +136,30 @@ const WeatherApp = () => {
   }, [fetchData]);
 
   // 透過 useMemo 避免每次都須重新計算取值，記得帶入 dependencies
-  const moment = useMemo(() => getMoment(weatherElement.locationName), [weatherElement.locationName]);
+  const moment = useMemo(() => getMoment(locationName), [locationName]);
 
   return (
     <div className={style.container}>
       {console.log("render")}
-      {console.log("render, isLoading: ", weatherElement.isLoading)}
+      {console.log("render, isLoading: ", isLoading)}
       <div className={style.weatherCard}>
-        <div className={style.location}>{weatherElement.locationName}</div>
+        <div className={style.location}>{locationName}</div>
         <div className={style.description}>
-          {weatherElement.description} {weatherElement.comfortability}
+          {description} {comfortability}
         </div>
         <div className={style.currentWeather}>
           <div className={style.temperature}>
-            {Math.round(weatherElement.temperature)} <div className={style.celsius}>°C</div>
+            {Math.round(temperature)} <div className={style.celsius}>°C</div>
           </div>
-          <WeatherIcon currentWeatherCode={weatherElement.weatherCode} moment={moment || "day"} />
+          <WeatherIcon currentWeatherCode={weatherCode} moment={moment || "day"} />
         </div>
         <div className={style.airFlow}>
           <AirFlowIcon />
-          {weatherElement.windSpeed} m/h
+          {windSpeed} m/h
         </div>
         <div className={style.rain}>
           <RainIcon />
-          {Math.round(weatherElement.rainPossibility)}%
+          {Math.round(rainPossibility)}%
         </div>
         <div
           className={style.refresh}
@@ -159,8 +171,8 @@ const WeatherApp = () => {
           {new Intl.DateTimeFormat("zh-TW", {
             hour: "numeric",
             minute: "numeric",
-          }).format(new Date(weatherElement.observationTime))}{" "}
-          {weatherElement.isLoading ? <LoadingIcon className={style.loading} /> : <RefreshIcon />}
+          }).format(new Date(observationTime))}{" "}
+          {isLoading ? <LoadingIcon className={style.loading} /> : <RefreshIcon />}
         </div>
       </div>
     </div>
